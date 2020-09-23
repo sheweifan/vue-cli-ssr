@@ -1,0 +1,11 @@
+# editorconfig.org
+# 表明是最顶层的配置文件，发现设为true时，才会停止查找.editorconfig文件
+root = true
+
+[*]
+charset = utf-8
+indent_style= 2
+indent_style = space
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
