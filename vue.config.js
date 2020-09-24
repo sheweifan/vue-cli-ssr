@@ -111,6 +111,23 @@ const config = {
       .plugins.delete('named-chunks')
       .delete('hmr')
       .delete('workbox')
+
+    // 参考https://github.com/Akryum/vue-cli-plugin-ssr/blob/master/lib/webpack.js
+    const isExtracting = config.plugins.has('extract-css')
+    if (isExtracting) {
+      // Remove extract
+      const langs = ['css', 'postcss', 'scss', 'sass', 'less', 'stylus']
+      const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+      for (const lang of langs) {
+        for (const type of types) {
+          const rule = config.module.rule(lang).oneOf(type)
+          rule.uses.delete('extract-css-loader')
+          // Critical CSS
+          rule.use('vue-style').loader('vue-style-loader').before('css-loader')
+        }
+      }
+      config.plugins.delete('extract-css')
+    }
   }
 }
 
