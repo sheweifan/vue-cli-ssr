@@ -8,6 +8,7 @@
 
 <script>
 export default {
+
   name: 'home',
 
   computed: {
@@ -30,17 +31,22 @@ export default {
   methods: {
     fetchBookItem() {
       // 这里要求 book 的 fetchItem 返回一个 Promise
-      return this.$store.dispatch('book/fetchItem', this.$route.params.id || 1)
+      return this.$store
+        .dispatch('book/fetchItem', this.$route.params.id || 1)
+        .then(() => {
+          if (this.$ssrContext) {
+            this.$ssrContext.title = '123123123'
+          }
+        })
     }
   },
 
-  components: {
-  }
+  components: {}
 }
 </script>
 
 <style scoped>
-.home{
+.home {
   background: green;
 }
 </style>
