@@ -4,16 +4,15 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "ssr:serve": "NODE_ENV=development PORT=3000 CLIENT_PORT=8080 node ./app/server.js",
-    "build": "vue-cli-service build && TARGET_NODE=node vue-cli-service build --no-clean",
+    "ssr:serve": "NODE_ENV=development PORT=3000 CLIENT_PORT=8080 TARGET_NODE=node node ./app/server.js",
+    "build": "TARGET_NODE=client vue-cli-service build && TARGET_NODE=node vue-cli-service build --no-clean",
     "start": "NODE_ENV=production TARGET_NODE=node PORT=3000 node ./app/server.js",
-    "dev": "concurrently 'npm run serve' 'npm run ssr:serve'"
+    "dev": "concurrently 'yarn serve' 'yarn ssr:serve'"
   },
   "dependencies": {
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
     "ejs": "^3.1.5",
-    "jsdom": "^16.4.0",
     "koa": "^2.13.0",
     "koa-send": "^5.0.1",
     "koa-static": "^5.0.0",
@@ -43,24 +42,5 @@
     "prettier": "^2.1.2",
     "vue-template-compiler": "^2.6.11",
     "webpack-node-externals": "^2.5.2"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  }
 }
