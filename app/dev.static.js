@@ -30,11 +30,12 @@ const main = async (ctx, next) => {
     return ctx.redirect(devHost + url)
   }
 
-  const clientEntryFile = await axios.get(devHost + '/index.html')
+  await next()
+  // const clientEntryFile = await axios.get(devHost + '/index.html')
 
-  ctx.set('content-type', 'text/html')
-  ctx.set('x-powered-by', 'koa/development')
-  ctx.body = clientEntryFile.data
+  // ctx.set('content-type', 'text/html')
+  // ctx.set('x-powered-by', 'koa/development')
+  // ctx.body = clientEntryFile.data
 }
 
 module.exports = main

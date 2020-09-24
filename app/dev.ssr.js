@@ -14,6 +14,7 @@ const MemoryFS = require('memory-fs')
 // See: https://cli.vuejs.org/zh/guide/webpack.html#%E5%AE%A1%E6%9F%A5%E9%A1%B9%E7%9B%AE%E7%9A%84-webpack-%E9%85%8D%E7%BD%AE
 const webpackConfig = require(PWD +
   '/node_modules/@vue/cli-service/webpack.config')
+
 // create a compiler of webpack config
 const serverCompiler = webpack(webpackConfig)
 // create the memory instance
@@ -24,6 +25,19 @@ serverCompiler.outputFileSystem = mfs
 
 let serverBundle
 // Monitor webpack changes because server bundles need to be dynamically updated
+
+const update = () => {
+  const bundlePath = path.join(
+    webpackConfig.output.path,
+    'vue-ssr-server-bundle.json'
+  )
+  try {
+    serverBundle = JSON.parse(mfs.readFileSync(bundlePath, 'utf-8'))
+  } catch (e) {
+    console.log('vue-ssr-server-bundle.json error', e)
+  }
+}
+
 serverCompiler.watch({}, (err, stats) => {
   if (err) throw err
 
@@ -31,19 +45,7 @@ serverCompiler.watch({}, (err, stats) => {
   stats.errors.forEach(error => console.error('ERROR:', error))
   stats.warnings.forEach(warn => console.warn('WARN:', warn))
 
-  const bundlePath = path.join(
-    webpackConfig.output.path,
-    'vue-ssr-server-bundle.json'
-  )
-
-  console.log(`bundlePath`, bundlePath)
-
-  try {
-    serverBundle = JSON.parse(mfs.readFileSync(bundlePath, 'utf-8'))
-    console.log('vue-ssr-server-bundle.json updated')
-  } catch (e) {
-    console.log('vue-ssr-server-bundle.json error')
-  }
+  update()
 })
 
 const resolve = file => path.resolve(__dirname, file)
@@ -60,12 +62,13 @@ const renderToString = (renderer, context) =>
 const tempStr = fs.readFileSync(resolve(PWD + '/public/index.ejs'), 'utf-8')
 const template = ejs.render(tempStr, { title: '{{title}}', mode: 'server' })
 
-const clientHost = process.env.CLIENT_PORT || 'localhost'
+const clientHost = process.env.CLIENT_HOST || 'localhost'
 const clientPort = process.env.CLIENT_PORT || 8080
 const clientPublicPath = process.env.CLIENT_PUBLIC_PATH || '/'
 
 const main = async (ctx, next) => {
   if (!serverBundle) {
+    update()
     ctx.body = 'Wait Compiling...'
     return
   }
@@ -88,8 +91,8 @@ const main = async (ctx, next) => {
     title: 'ssr mode',
     url: ctx.url
   }
-
-  const html = await renderToString(renderer, context)
+  let html = ''
+  html = await renderToString(renderer, context)
 
   ctx.body = html
 }

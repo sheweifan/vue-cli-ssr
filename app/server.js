@@ -16,31 +16,31 @@ const clientEntryFile = getClientEntryFile(isProd)
 
 const staticPath = path.resolve(__dirname, '../dist')
 
-app.use(async (ctx, next) => {
-  if (ctx.method !== 'GET') return
-
-  try {
-    await next()
-  } catch (err) {
-    ctx.set('content-type', 'text/html')
-
-    if (err.code === 404) {
-      ctx.body = clientEntryFile
-      return
-    }
-
-    console.error(' [SERVER ERROR] ', err.toString())
-
-    ctx.body = clientEntryFile
-  }
-})
-
-app.use(serve(staticPath))
-
-// app.use(require('./prod.ssr.js'))
-
 if (process.env.NODE_ENV === 'production') {
+  app.use(async (ctx, next) => {
+    if (ctx.method !== 'GET') return
+    try {
+      await next()
+    } catch (err) {
+      ctx.set('content-type', 'text/html')
+
+      if (err.code === 404) {
+        ctx.body = clientEntryFile
+        return
+      }
+
+      console.error(' [SERVER ERROR] ', err.toString())
+
+      ctx.body = clientEntryFile
+    }
+  })
+
+  app.use(serve(staticPath, {
+    index: false
+  }))
   app.use(require('./prod.ssr.js'))
+
+
 } else {
   app.use(require('./dev.static.js'))
   app.use(require('./dev.ssr.js'))
