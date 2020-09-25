@@ -2,6 +2,7 @@ const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
 const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
 const nodeExternals = require('webpack-node-externals')
 const merge = require('lodash.merge')
+// const webpack = require('webpack')
 
 const TARGET_NODE = process.env.TARGET_NODE === 'node'
 const DEV_MODE = process.env.NODE_ENV === 'development'
@@ -18,6 +19,13 @@ const config = {
         '/'
       : '/',
   // assetsDir: 'dist',
+  // configureWebpack: {
+  //   plugins: [
+  //     new webpack.DefinePlugin({
+  //       'process.env.VUE_ENV': TARGET_NODE ? "'server'" : "'client'"
+  //     })
+  //   ]
+  // },
   chainWebpack: config => {
     if (DEV_MODE) {
       config.devServer.headers({ 'Access-Control-Allow-Origin': '*' })
@@ -25,6 +33,15 @@ const config = {
 
     // 移除 prefetch 插件
     config.plugins.delete('prefetch')
+
+    // 全局变量
+    config.plugin('define').tap(args => {
+      return [
+        Object.assign(args[0], {
+          'process.env.VUE_ENV': TARGET_NODE ? "'server'" : "'client'"
+        })
+      ]
+    })
 
     config
       .entry('app')
@@ -94,6 +111,8 @@ const config = {
       .end()
 
     if (!TARGET_NODE) return
+
+    config.plugins.delete('friendly-errors')
 
     config
       .entry('app')
