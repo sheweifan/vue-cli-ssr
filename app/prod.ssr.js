@@ -1,7 +1,6 @@
 const path = require('path')
 const fs = require('fs')
 const ejs = require('ejs')
-const get = require('lodash.get')
 
 const resolve = file => path.resolve(__dirname, file)
 const PWD = process.env.PWD
