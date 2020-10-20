@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "ssr:serve": "NODE_ENV=development PORT=3000 CLIENT_PORT=8080 TARGET_NODE=node node ./app/server.js",
+    "ssr:serve": "NODE_ENV=development PORT=3000 CLIENT_PORT=8080 TARGET_NODE=node node ./server/server.js",
     "build": "TARGET_NODE=client vue-cli-service build && TARGET_NODE=node vue-cli-service build --no-clean",
-    "start": "NODE_ENV=production TARGET_NODE=node PORT=3000 node ./app/server.js",
+    "start": "NODE_ENV=production TARGET_NODE=node PORT=3000 node ./server/server.js",
     "dev": "concurrently 'yarn serve' 'yarn ssr:serve'"
   },
   "dependencies": {

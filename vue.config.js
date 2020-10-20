@@ -46,7 +46,7 @@ const config = {
     config
       .entry('app')
       .clear()
-      .add('./src/entry-client.js')
+      .add('./app/entry-client.js')
       .end()
       // 为了让服务器端和客户端能够共享同一份入口模板文件
       // 需要让入口模板文件支持动态模板语法（这里选了 ejs）
@@ -117,7 +117,7 @@ const config = {
     config
       .entry('app')
       .clear()
-      .add('./src/entry-server.js')
+      .add('./app/entry-server.js')
       .end()
       .target('node')
       .devtool('source-map')

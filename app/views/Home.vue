@@ -7,19 +7,31 @@
 </template>
 
 <script>
-export default {
+import { Book } from '../store/book'
 
+export default {
+  dataStore: {
+    name: 'book',
+    store: Book
+  },
   name: 'home',
 
   computed: {
     book() {
-      return this.$store.state.book.items[this.$route.params.id || 1]
+      console.log(this.$store.state)
+      return (
+        this.$store.state.book &&
+        this.$store.state.book.items[this.$route.params.id || 1]
+      )
     }
   },
   // 此函数只会在服务器端调用，注意，只有 vue v2.6.0+ 才支持此函数
   serverPrefetch() {
     return this.fetchBookItem()
   },
+  // preFetch({ store, route }) {
+  //   return store.dispatch('book/fetchItem', route.params.id || 1)
+  // },
   // 此生命周期函数只会在客户端调用
   // 客户端需要判断在 item 不存在的场景再去调用 fetchBookItem 方法获取数据
   mounted() {
